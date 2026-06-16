@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 30-Day Launchpad — Week 1 Student Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:      #FFFFFF;
+    --card:       #F4F5F8;
+    --card2:      #ECEEF4;
+    --border:     #D0D4E0;
+    --text:       #111318;
+    --muted:      #4A4E63;
+    --amber:      #C07800;
+    --amber2:     #E09000;
+    --teal:       #156F6F;
+    --red:        #B83025;
+    --green:      #1A7038;
+    --nav-bg:     #111318;
+    --nav-text:   #F0EDE6;
+    --nav-muted:  #8B8FA8;
+    --nav-border: #2E3240;
+    --accent-bg:  rgba(192,120,0,0.08);
+    --teal-bg:    rgba(21,111,111,0.08);
+    --green-bg:   rgba(26,112,56,0.08);
+    --red-bg:     rgba(184,48,37,0.08);
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--black);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+    overflow: hidden;
+  }
+
+  /* ── SLIDE CONTAINER ── */
+  #deck {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 3.5vw 7vw 80px 7vw;
+    padding-top: max(3.5vw, 1.5rem);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* Custom scrollbar — subtle */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+  .slide::-webkit-scrollbar { width: 4px; }
+  .slide::-webkit-scrollbar-track { background: transparent; }
+  .slide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* Slides that are mostly one element benefit from vertical centering */
+  .slide-title,
+  .slide-week-intro,
+  .slide-close {
+    justify-content: center;
+  }
+
+  /* ── NAV BAR — stays dark for contrast ── */
+  #nav-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 56px;
+    background: var(--nav-bg);
+    border-top: 1px solid var(--nav-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    z-index: 100;
+  }
+  #week-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    color: #F5A623;
+    text-transform: uppercase;
+  }
+  #slide-counter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--nav-muted);
+  }
+  .nav-btn {
+    background: none;
+    border: 1px solid var(--nav-border);
+    color: var(--nav-text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    padding: 0.45rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .nav-btn:hover { background: #F5A623; color: #111318; border-color: #F5A623; }
+  .nav-btns { display: flex; gap: 0.5rem; }
+
+  /* progress bar */
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: var(--amber);
+    transition: width 0.3s ease;
+    z-index: 101;
+  }
+
+  /* ── WEEK NAV — stays dark ── */
+  #week-nav {
+    position: fixed;
+    top: 1rem; right: 1.5rem;
+    display: flex; gap: 0.4rem;
+    z-index: 100;
+  }
+  .wk-btn {
+    background: var(--nav-bg);
+    border: 1px solid var(--nav-border);
+    color: var(--nav-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.1em;
+  }
+  .wk-btn:hover, .wk-btn.active { background: #F5A623; color: #111318; border-color: #F5A623; }
+
+  /* ── SLIDE TYPES ── */
+
+  /* TITLE SLIDE */
+  .slide-title { background: var(--black); }
+  .slide-title .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .slide-title h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(3.5rem, 9vw, 8rem);
+    font-weight: 800;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    margin-bottom: 2rem;
+    color: var(--text);
+  }
+  .slide-title h1 em { font-style: normal; color: var(--amber); }
+  .slide-title .subtitle {
+    color: var(--muted);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    max-width: 580px;
+    line-height: 1.65;
+    margin-bottom: 2.5rem;
+  }
+  .stat-row { display: flex; gap: 3rem; }
+  .stat .n {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 800;
+    color: var(--amber);
+  }
+  .stat .l {
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* WEEK INTRO SLIDE */
+  .slide-week-intro { background: var(--card); }
+  .slide-week-intro .big-num {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(6rem, 18vw, 16rem);
+    font-weight: 800;
+    line-height: 0.85;
+    color: var(--border);
+    position: absolute;
+    right: 5vw;
+    bottom: 3rem;
+  }
+  .slide-week-intro .wk-tag {
+    display: inline-block;
+    background: var(--amber);
+    color: #FFFFFF;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    padding: 0.3rem 0.85rem;
+    margin-bottom: 1.25rem;
+    text-transform: uppercase;
+  }
+  .slide-week-intro h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 1rem;
+    max-width: 60vw;
+    position: relative;
+    z-index: 1;
+    color: var(--text);
+  }
+  .slide-week-intro .obj {
+    color: var(--muted);
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    max-width: 52vw;
+    line-height: 1.65;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* VOCAB SLIDE */
+  .slide-vocab { background: var(--black); }
+  .slide-vocab .slide-heading {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .slide-vocab .slide-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--amber);
+    letter-spacing: 0.15em;
+    margin-bottom: 1.75rem;
+    text-transform: uppercase;
+  }
+  .vocab-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .vl-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 1.1rem 1.5rem;
+    background: var(--card);
+    border-left: 4px solid var(--teal);
+  }
+  .vl-term {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--teal);
+    min-width: 160px;
+    flex-shrink: 0;
+  }
+  .vl-def { font-size: 1rem; color: var(--muted); line-height: 1.55; }
+
+  /* CONCEPT / ANALOGY SLIDE */
+  .slide-concept { background: var(--card); }
+  .slide-concept .concept-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 1.25rem;
+  }
+  .slide-concept h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.9rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+  .concept-box {
+    background: var(--black);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--amber);
+    padding: 1.5rem;
+  }
+  .concept-box h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--amber);
+    margin-bottom: 0.75rem;
+  }
+  .concept-box p { font-size: 1rem; color: var(--muted); line-height: 1.65; }
+  .concept-box .highlight {
+    margin-top: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--text);
+    background: var(--card);
+    padding: 0.7rem 0.85rem;
+    border-left: 3px solid var(--teal);
+  }
+
+  /* FORMULA SLIDE */
+  .slide-formula { background: var(--black); }
+  .slide-formula .formula-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .slide-formula h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+    font-weight: 800;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .formula-big {
+    background: var(--card);
+    border: 2px solid var(--amber);
+    display: inline-block;
+    padding: 1.75rem 3rem;
+    margin-bottom: 2rem;
+  }
+  .formula-big .f-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .formula-big .f-eq {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(1.1rem, 2.5vw, 1.7rem);
+    font-weight: 600;
+    color: var(--amber);
+    letter-spacing: 0.04em;
+  }
+  .drill-table-slide {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+  }
+  .drill-table-slide th {
+    background: var(--card2);
+    padding: 0.75rem 1.1rem;
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--border);
+  }
+  .drill-table-slide td {
+    padding: 0.85rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    line-height: 1.45;
+  }
+  .drill-table-slide tr:last-child td { border-bottom: none; }
+  .target-tag {
+    display: inline-block;
+    background: var(--accent-bg);
+    color: var(--amber);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    padding: 0.2rem 0.5rem;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+  }
+  .blank {
+    display: inline-block;
+    width: 90px;
+    border-bottom: 2px solid var(--amber);
+    height: 1.2em;
+    vertical-align: middle;
+  }
+
+  /* QUIZ SLIDE */
+  .slide-quiz { background: var(--card); }
+  .slide-quiz .quiz-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 0.18em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .quiz-q-big {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 2rem;
+    max-width: 78vw;
+    letter-spacing: -0.01em;
+    color: var(--text);
+  }
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    max-width: 72vw;
+  }
+  .q-opt {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 1.1rem 1.5rem;
+    background: var(--black);
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: clamp(0.95rem, 1.6vw, 1.05rem);
+    color: var(--text);
+  }
+  .q-opt:hover { border-color: var(--amber); background: var(--accent-bg); }
+  .q-opt.correct { border-color: var(--green); background: var(--green-bg); }
+  .q-opt.wrong { border-color: var(--red); background: var(--red-bg); }
+  .opt-letter {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--amber);
+    min-width: 1.8rem;
+    font-weight: 700;
+  }
+  .quiz-open-answer {
+    background: var(--black);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--amber);
+    padding: 1.5rem 1.75rem;
+    font-size: clamp(1rem, 1.6vw, 1.1rem);
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 68vw;
+  }
+  .quiz-open-answer .blank-line {
+    display: block;
+    width: 240px;
+    border-bottom: 2px solid var(--amber);
+    height: 1.6em;
+    margin: 0.6rem 0;
+  }
+
+  /* DELTA VISUAL SLIDE */
+  .slide-delta { background: var(--black); }
+  .delta-visual-row {
+    display: flex; align-items: center; gap: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .dv-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(0.85rem, 1.3vw, 0.95rem);
+    color: var(--muted);
+    width: 180px;
+    flex-shrink: 0;
+  }
+  .dv-track {
+    flex: 1;
+    height: clamp(36px, 5vw, 50px);
+    background: var(--card);
+    position: relative;
+    border: 1px solid var(--border);
+  }
+  .dv-fill {
+    height: 100%;
+    display: flex; align-items: center;
+    padding-left: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(0.82rem, 1.3vw, 0.95rem);
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+
+  /* RUNBOOK SLIDE */
+  .slide-runbook { background: var(--card); }
+  .runbook-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 1.5rem;
+  }
+  .rb-step {
+    background: var(--black);
+    padding: 1.5rem;
+  }
+  .rb-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--amber);
+    letter-spacing: 0.18em;
+    margin-bottom: 0.5rem;
+  }
+  .rb-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+  .rb-desc { font-size: clamp(0.88rem, 1.3vw, 0.95rem); color: var(--muted); line-height: 1.5; }
+
+  /* CONSTITUTION SLIDE */
+  .slide-constitution { background: var(--card); }
+  .const-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  .const-item {
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+    background: var(--black);
+  }
+  .const-n {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .const-t {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+  .const-d { font-size: clamp(0.9rem, 1.3vw, 1rem); color: var(--muted); line-height: 1.55; }
+
+  /* ANALOGY SLIDE */
+  .slide-analogy { background: var(--black); }
+  .analogy-box {
+    max-width: 72vw;
+    background: var(--card);
+    border-left: 5px solid var(--amber);
+    padding: 1.75rem 2.25rem;
+    margin-bottom: 1.25rem;
+    font-size: clamp(1rem, 1.7vw, 1.1rem);
+    line-height: 1.75;
+    color: var(--text);
+  }
+  .role-row { display: flex; gap: 1.25rem; margin-top: 0.75rem; }
+  .role-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1rem 1.25rem;
+    flex: 1;
+    font-size: clamp(0.9rem, 1.4vw, 1rem);
+  }
+  .role-box .rl { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; letter-spacing: 0.1em; margin-bottom: 0.35rem; }
+  .role-box .buyer-l { color: var(--teal); }
+  .role-box .seller-l { color: var(--amber); }
+  .role-box .rd { color: var(--muted); }
+
+  /* CLOSING SLIDE */
+  .slide-close { background: var(--black); text-align: center; align-items: center; }
+  .slide-close .close-quote {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2.4rem);
+    font-weight: 700;
+    font-style: italic;
+    color: var(--muted);
+    max-width: 680px;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+  .slide-close .close-attr {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--border);
+    letter-spacing: 0.12em;
+    margin-bottom: 3rem;
+  }
+  .slide-close .close-cta {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 5vw, 4.5rem);
+    font-weight: 800;
+    color: var(--amber);
+    letter-spacing: -0.02em;
+  }
+
+  /* ── FOUNDATION SLIDES ── */
+  .slide-foundation { background: var(--black); }
+  .slide-foundation .f-eyebrow { font-family:'JetBrains Mono',monospace; font-size:0.85rem; letter-spacing:0.18em; color:var(--teal); text-transform:uppercase; margin-bottom:1rem; }
+  .slide-foundation h2 { font-family:'Syne',sans-serif; font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:800; letter-spacing:-0.02em; margin-bottom:1.5rem; color:var(--text); }
+  .foundation-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; max-width:80vw; }
+  .f-box { background:var(--card); border:1px solid var(--border); border-top:4px solid var(--teal); padding:1.35rem 1.5rem; }
+  .f-box.amber { border-top-color:var(--amber); }
+  .f-box h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:clamp(0.95rem,1.5vw,1.1rem); color:var(--teal); margin-bottom:0.6rem; }
+  .f-box.amber h3 { color:var(--amber); }
+  .f-box p { font-size:clamp(0.9rem,1.4vw,1rem); color:var(--muted); line-height:1.6; }
+  .f-box .f-example { margin-top:0.75rem; padding:0.65rem 0.85rem; background:var(--black); border-left:3px solid var(--teal); font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:var(--amber); }
+  .f-box.amber .f-example { border-left-color:var(--amber); }
+  .full-box { grid-column:1/-1; background:var(--card2); border:1px solid var(--border); padding:1.35rem 1.5rem; }
+  .full-box p { font-size:clamp(0.95rem,1.4vw,1.05rem); color:var(--muted); line-height:1.65; }
+
+  /* ── SOFI SLIDE ── */
+  .slide-sofi { background: var(--card); }
+  .slide-sofi .s-eyebrow { font-family:'JetBrains Mono',monospace; font-size:0.85rem; letter-spacing:0.18em; color:var(--amber); text-transform:uppercase; margin-bottom:1rem; }
+  .slide-sofi h2 { font-family:'Syne',sans-serif; font-size:clamp(1.7rem,3.2vw,2.5rem); font-weight:800; letter-spacing:-0.02em; margin-bottom:1.25rem; color:var(--text); }
+  .sofi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--border); border:1px solid var(--border); max-width:82vw; margin-bottom:1.25rem; }
+  .sofi-cell { background:var(--black); padding:1.1rem 1.35rem; }
+  .sofi-cell .sc-label { font-family:'JetBrains Mono',monospace; font-size:0.78rem; letter-spacing:0.12em; color:var(--muted); text-transform:uppercase; margin-bottom:0.35rem; }
+  .sofi-cell .sc-val { font-family:'Syne',sans-serif; font-weight:700; font-size:clamp(1rem,1.6vw,1.2rem); color:var(--amber); }
+  .sofi-cell .sc-sub { font-size:0.88rem; color:var(--muted); margin-top:0.2rem; }
+  .sofi-why { max-width:82vw; display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .sofi-reason { background:var(--black); border-left:4px solid var(--teal); padding:1rem 1.1rem; font-size:clamp(0.9rem,1.3vw,1rem); color:var(--muted); line-height:1.55; }
+  .sofi-reason strong { color:var(--text); }
+
+  /* ── INSPIRATION SLIDES ── */
+  .slide-inspiration { background: var(--black); }
+  .slide-inspiration .i-eyebrow { font-family:'JetBrains Mono',monospace; font-size:0.85rem; letter-spacing:0.18em; color:var(--amber); text-transform:uppercase; margin-bottom:1rem; }
+  .slide-inspiration h2 { font-family:'Syne',sans-serif; font-size:clamp(1.7rem,3.2vw,2.6rem); font-weight:800; letter-spacing:-0.02em; margin-bottom:1.25rem; color:var(--text); }
+  .person-card { background:var(--card); border:1px solid var(--border); border-left:5px solid var(--amber); padding:1.75rem 2.25rem; max-width:74vw; }
+  .person-card.teal { border-left-color:var(--teal); }
+  .person-name { font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(1.2rem,2.2vw,1.75rem); letter-spacing:-0.01em; margin-bottom:0.2rem; color:var(--text); }
+  .person-title { font-family:'JetBrains Mono',monospace; font-size:0.82rem; color:var(--amber); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:1rem; }
+  .person-card.teal .person-title { color:var(--teal); }
+  .person-story { font-size:clamp(0.92rem,1.4vw,1.02rem); color:var(--muted); line-height:1.75; }
+  .person-story strong { color:var(--text); }
+  .person-quote { margin-top:1rem; padding:0.85rem 1.1rem; background:var(--black); border-left:3px solid var(--amber); font-style:italic; font-size:clamp(0.92rem,1.4vw,1.02rem); color:var(--text); line-height:1.55; }
+  .person-card.teal .person-quote { border-left-color:var(--teal); }
+
+  /* ── PROFILE SLIDE ── */
+  .slide-profile { background: var(--card); }
+  .profile-split { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; max-width:82vw; margin-top:1.25rem; }
+  .profile-col h3 { font-family:'JetBrains Mono',monospace; font-size:0.82rem; letter-spacing:0.18em; text-transform:uppercase; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:2px solid var(--border); }
+  .profile-col.yes h3 { color:var(--green); }
+  .profile-col.no h3 { color:var(--red); }
+  .profile-item { display:flex; align-items:flex-start; gap:0.85rem; padding:0.7rem 0; border-bottom:1px solid var(--border); font-size:clamp(0.88rem,1.3vw,1rem); color:var(--muted); line-height:1.5; }
+  .profile-item:last-child { border-bottom:none; }
+  .pi-icon { flex-shrink:0; font-size:1rem; margin-top:0.05rem; }
+  .profile-mantra { grid-column:1/-1; background:var(--black); border:2px solid var(--amber); padding:1.35rem 1.75rem; text-align:center; margin-top:0.5rem; font-family:'Syne',sans-serif; font-weight:800; font-size:clamp(1.05rem,2vw,1.5rem); color:var(--amber); letter-spacing:-0.01em; }
+
+  /* ── HOMEWORK SLIDE ── */
+  .slide-homework { background: #FFF8EC; }
+  .slide-homework .hw-eyebrow { font-family:'JetBrains Mono',monospace; font-size:0.85rem; letter-spacing:0.18em; color:var(--amber); text-transform:uppercase; margin-bottom:1rem; }
+  .slide-homework h2 { font-family:'Syne',sans-serif; font-size:clamp(1.7rem,3.2vw,2.5rem); font-weight:800; letter-spacing:-0.02em; margin-bottom:1.5rem; color:var(--text); }
+  .hw-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; max-width:80vw; }
+  .hw-item { background:#FFFFFF; border:1px solid var(--border); border-left:5px solid var(--amber); padding:1.25rem 1.5rem; }
+  .hw-num { font-family:'JetBrains Mono',monospace; font-size:0.82rem; color:var(--amber); letter-spacing:0.15em; margin-bottom:0.4rem; }
+  .hw-title { font-family:'Syne',sans-serif; font-weight:700; font-size:1.05rem; color:var(--text); margin-bottom:0.4rem; }
+  .hw-desc { font-size:0.95rem; color:var(--muted); line-height:1.55; }
+  .hw-tag { display:inline-block; margin-top:0.5rem; background:var(--accent-bg); color:var(--amber); font-family:'JetBrains Mono',monospace; font-size:0.75rem; padding:0.2rem 0.5rem; letter-spacing:0.08em; }
+
+  /* ── INTERACTIVE ACTIVITY SLIDE ── */
+  .slide-activity { background: var(--black); }
+  .slide-activity .act-eyebrow { font-family:'JetBrains Mono',monospace; font-size:0.85rem; letter-spacing:0.18em; color:var(--teal); text-transform:uppercase; margin-bottom:1rem; }
+  .slide-activity h2 { font-family:'Syne',sans-serif; font-size:clamp(1.7rem,3.2vw,2.5rem); font-weight:800; letter-spacing:-0.02em; margin-bottom:0.5rem; color:var(--text); }
+  .act-subtitle { font-size:1rem; color:var(--muted); margin-bottom:1.5rem; max-width:60vw; }
+  .activity-box { background:var(--card); border:1px solid var(--border); border-top:4px solid var(--teal); padding:1.5rem 2rem; max-width:78vw; margin-bottom:1rem; }
+  .activity-box h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1.1rem; color:var(--teal); margin-bottom:0.75rem; }
+  .activity-box p { font-size:1rem; color:var(--muted); line-height:1.6; }
+  .activity-steps { list-style:none; margin-top:0.75rem; }
+  .activity-steps li { display:flex; align-items:flex-start; gap:0.85rem; padding:0.55rem 0; border-bottom:1px solid var(--border); font-size:0.97rem; color:var(--text); line-height:1.45; }
+  .activity-steps li:last-child { border-bottom:none; }
+  .act-step-num { font-family:'JetBrains Mono',monospace; font-size:0.82rem; color:var(--teal); font-weight:700; flex-shrink:0; min-width:2rem; }
+  .timer-badge { display:inline-block; background:var(--teal-bg); border:1px solid var(--teal); color:var(--teal); font-family:'JetBrains Mono',monospace; font-size:0.8rem; padding:0.25rem 0.65rem; letter-spacing:0.1em; margin-left:0.75rem; }
+  .vs-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; max-width:78vw; }
+  .vs-col { background:var(--card); border:1px solid var(--border); padding:1.25rem 1.5rem; }
+  .vs-col h3 { font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; margin-bottom:0.75rem; }
+  .vs-col.green h3 { color:var(--green); border-bottom:2px solid var(--green); padding-bottom:0.4rem; }
+  .vs-col.red h3 { color:var(--red); border-bottom:2px solid var(--red); padding-bottom:0.4rem; }
+  .vs-item { font-size:0.95rem; color:var(--muted); padding:0.5rem 0; border-bottom:1px solid var(--border); line-height:1.4; }
+  .vs-item:last-child { border-bottom:none; }
+  .act-scenario { background:var(--card2); border:1px solid var(--border); border-left:4px solid var(--amber); padding:1.1rem 1.5rem; max-width:78vw; font-size:1rem; color:var(--text); line-height:1.65; margin-bottom:1rem; }
+  .act-prompt { font-family:'Syne',sans-serif; font-weight:700; font-size:1.15rem; color:var(--text); margin-bottom:1.25rem; max-width:72vw; }
+  .act-options { display:flex; flex-direction:column; gap:0.75rem; max-width:72vw; }
+  .act-opt { display:flex; align-items:center; gap:1rem; padding:1rem 1.35rem; background:var(--card); border:2px solid var(--border); cursor:pointer; transition:all 0.2s; font-size:1rem; color:var(--text); }
+  .act-opt:hover { border-color:var(--teal); background:var(--teal-bg); }
+  .act-opt.selected { border-color:var(--teal); background:var(--teal-bg); }
+  .act-opt-letter { font-family:'JetBrains Mono',monospace; font-size:0.85rem; color:var(--teal); font-weight:700; min-width:1.8rem; }
+  .reveal-btn { margin-top:1.25rem; padding:0.75rem 2rem; background:var(--teal); color:#FFFFFF; border:none; font-family:'Syne',sans-serif; font-weight:700; font-size:1rem; cursor:pointer; letter-spacing:0.05em; transition:opacity 0.2s; }
+  .reveal-btn:hover { opacity:0.85; }
+  .reveal-answer { display:none; margin-top:1rem; background:var(--teal-bg); border:1px solid var(--teal); border-left:4px solid var(--teal); padding:1rem 1.35rem; font-size:1rem; color:var(--text); line-height:1.6; max-width:72vw; }
+  .reveal-answer.show { display:block; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div id="deck">
+
+  <!-- ══════════════════════════════════════════
+       TITLE
+  ══════════════════════════════════════════ -->
+  <div class="slide slide-title active" data-week="0">
+    <div class="eyebrow">// Options Trading Academy</div>
+    <h1>The 30-Day<br><em>Launchpad</em></h1>
+    <p class="subtitle">From zero derivatives knowledge to executing your first live, cash-secured trade — in four sessions with a $500 seed balance.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="n">4</div><div class="l">Sessions</div></div>
+      <div class="stat"><div class="n">60m</div><div class="l">Each</div></div>
+      <div class="stat"><div class="n">$500</div><div class="l">Seed Capital</div></div>
+      <div class="stat"><div class="n">Live</div><div class="l">Week 4 Execution</div></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       FOUNDATION: WHAT IS A STOCK?
+  ══════════════════════════════════════════ -->
+  <!-- ══════════════════════════════════════════
+       WEEK 1
+  ══════════════════════════════════════════ -->
+
+  <!-- WHAT IS A STOCK -->
+  <div class="slide slide-foundation" data-week="0">
+    <div class="f-eyebrow">// Before We Trade — Foundation</div>
+    <h2>First: What is a stock?</h2>
+    <div class="foundation-grid">
+      <div class="f-box">
+        <h3>A Company Needs Money to Grow</h3>
+        <p>When a company wants to expand — hire people, build products, open new offices — it needs capital. One way to raise it is to sell small pieces of ownership in the company to the public. Each piece is called a <strong style="color:var(--text);">share of stock</strong>.</p>
+        <div class="f-example">Apple needed capital → sold shares → people bought in → Apple grew</div>
+      </div>
+      <div class="f-box amber">
+        <h3>You Buy a Share, You Own a Piece</h3>
+        <p>When you buy one share of SOFI, you literally own a tiny slice of SoFi Technologies. If the company grows and becomes more valuable, your share becomes worth more. If it struggles, your share loses value. You are a part-owner.</p>
+        <div class="f-example">1 share of SOFI at $4.80 = you own a piece of SoFi Technologies</div>
+      </div>
+      <div class="f-box">
+        <h3>Stock Price Moves Every Second</h3>
+        <p>The price of a stock changes constantly based on what buyers are willing to pay and what sellers are willing to accept. Good news, strong earnings, new products — price goes up. Bad news, weak outlook — price goes down. The market is a live auction, running 9:30am–4pm EST every weekday.</p>
+      </div>
+      <div class="f-box amber">
+        <h3>Why Do People Buy Stocks?</h3>
+        <p>Two reasons: <strong style="color:var(--text);">growth</strong> (the stock price rises over time, so their investment grows) and <strong style="color:var(--text);">income</strong> (some companies pay dividends — regular cash payments to shareholders). We're using stocks as the underlying asset for our options strategy.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT IS THE STOCK MARKET -->
+  <div class="slide slide-foundation" data-week="0">
+    <div class="f-eyebrow">// Before We Trade — Foundation</div>
+    <h2>What is the stock market?</h2>
+    <div class="foundation-grid">
+      <div class="f-box">
+        <h3>The Market is the Marketplace</h3>
+        <p>The stock market is simply the organized system where buyers and sellers meet to trade shares. In the US, the two main exchanges are the <strong style="color:var(--text);">NYSE</strong> (New York Stock Exchange) and <strong style="color:var(--text);">Nasdaq</strong>. SOFI trades on Nasdaq.</p>
+        <div class="f-example">Nasdaq: where SOFI, Apple, Google, Amazon all trade</div>
+      </div>
+      <div class="f-box amber">
+        <h3>Thousands of Companies, One Platform</h3>
+        <p>Over 5,000 companies are publicly traded in the US. When you hear "the market went up today," that means a major index like the <strong style="color:var(--text);">S&P 500</strong> — which tracks the 500 largest companies — rose in value. It's the scoreboard for the whole economy.</p>
+        <div class="f-example">S&P 500 up 1% = most large US companies gained value today</div>
+      </div>
+      <div class="full-box">
+        <p><strong style="color:var(--text);">The most important thing to understand:</strong> the stock market is not a casino. Over any 20-year period in American history, the stock market has gone up. Companies innovate, grow, and generate profit — and that profit flows to shareholders. Learning to participate in this system is how wealth gets built across generations. This is what we're here to learn.</p>
+      </div>
+      <div class="f-box">
+        <h3>Market Hours</h3>
+        <p>The US stock market is open Monday–Friday, 9:30am–4:00pm Eastern Time. Options can be placed during and slightly outside these hours depending on your broker. We trade during market hours only.</p>
+      </div>
+      <div class="f-box amber">
+        <h3>Who Can Participate?</h3>
+        <p>Anyone. All you need is a brokerage account, money to invest, and knowledge. There is no minimum age requirement with a custodial account. There is no zip code requirement. The market does not know your name, your background, or where you went to school. It only knows your trade.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHY SOFI — WHO THEY ARE -->
+  <div class="slide slide-sofi" data-week="0">
+    <div class="s-eyebrow">// Our First Trade — Meet the Company</div>
+    <h2>Why SOFI? Who are they?</h2>
+    <div class="sofi-grid">
+      <div class="sofi-cell">
+        <div class="sc-label">Founded</div>
+        <div class="sc-val">2011</div>
+        <div class="sc-sub">San Francisco, CA</div>
+      </div>
+      <div class="sofi-cell">
+        <div class="sc-label">What They Do</div>
+        <div class="sc-val">Digital Bank</div>
+        <div class="sc-sub">Loans, investing, checking, savings, credit cards</div>
+      </div>
+      <div class="sofi-cell">
+        <div class="sc-label">Who They Serve</div>
+        <div class="sc-val">18–40 Year Olds</div>
+        <div class="sc-sub">Tech-savvy millennials & Gen Z getting money right</div>
+      </div>
+      <div class="sofi-cell">
+        <div class="sc-label">Members (2025)</div>
+        <div class="sc-val">10M+</div>
+        <div class="sc-sub">Growing ~30% per year</div>
+      </div>
+      <div class="sofi-cell">
+        <div class="sc-label">Stock Ticker</div>
+        <div class="sc-val">SOFI</div>
+        <div class="sc-sub">Trades on Nasdaq</div>
+      </div>
+      <div class="sofi-cell">
+        <div class="sc-label">Stock Price Range</div>
+        <div class="sc-val">$8 → $27+</div>
+        <div class="sc-sub">~$8.51 in Feb 2024 → $26+ by late 2025</div>
+      </div>
+    </div>
+    <div class="sofi-why">
+      <div class="sofi-reason"><strong>They are us.</strong> SoFi was built for the generation that does everything on their phone — banking, investing, loans. Their customer is literally you.</div>
+      <div class="sofi-reason"><strong>They got profitable.</strong> SoFi posted its first full year of net income in 2024 and raised guidance multiple times in 2025. Revenue growing ~16% per year.</div>
+      <div class="sofi-reason"><strong>They have a bank charter.</strong> In 2022 SoFi became a real bank — meaning they can hold deposits and lend from them, which is far cheaper than borrowing capital. That changes their entire cost structure.</div>
+      <div class="sofi-reason"><strong>The price is right for us.</strong> At ~$4–6/share, one contract controls 100 shares at a cost of $400–$600 in collateral — perfect for a $500 account. We're not using SOFI because it's our favorite stock. We're using it because it's the right size for where we are right now.</div>
+    </div>
+  </div>
+
+  <!-- SOFI STOCK STORY -->
+  <div class="slide slide-sofi" data-week="0">
+    <div class="s-eyebrow">// SOFI — Stock History & Outlook</div>
+    <h2>Where the stock has been. Where it's going.</h2>
+    <div class="sofi-grid" style="grid-template-columns:repeat(4,1fr);">
+      <div class="sofi-cell">
+        <div class="sc-label">Feb 2024</div>
+        <div class="sc-val">~$8.51</div>
+        <div class="sc-sub">Below $10 most of early 2024</div>
+      </div>
+      <div class="sofi-cell">
+        <div class="sc-label">Mid 2025</div>
+        <div class="sc-val">$15–$22</div>
+        <div class="sc-sub">Broke through $10, built momentum</div>
+      </div>
+      <div class="sofi-cell">
+        <div class="sc-label">Late 2025</div>
+        <div class="sc-val">$26–$30</div>
+        <div class="sc-sub">Record revenue, raised guidance 3×</div>
+      </div>
+      <div class="sofi-cell">
+        <div class="sc-label">Analyst Target</div>
+        <div class="sc-val">$21–$27</div>
+        <div class="sc-sub">Average from 19 analysts as of 2025</div>
+      </div>
+    </div>
+    <div class="sofi-why" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="sofi-reason"><strong>Q3 2025 Record Revenue:</strong> $962 million in a single quarter. Net income of $139 million. Full-year adjusted EBITDA guidance raised to $1.035 billion.</div>
+      <div class="sofi-reason"><strong>Member Growth:</strong> Management expects to add 3+ million new members in 2025 alone — that's 30% growth in one year. More members = more products sold = more revenue.</div>
+      <div class="sofi-reason"><strong>Interest Rate Tailwind:</strong> Analysts expect interest rate cuts to benefit SoFi's lending business significantly. Lower rates = more people borrow = SoFi makes more loans.</div>
+    </div>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--muted);margin-top:1.25rem;max-width:78vw;">We are not predicting the stock will rise. We don't need it to. We are selling puts below the current price — we just need SOFI to not collapse. A growing, profitable company with a banking license and 10M+ members is a reasonable business to back.</p>
+  </div>
+
+  <!-- INSPIRATION — INTRO SLIDE -->
+  <div class="slide slide-inspiration" data-week="0">
+    <div class="i-eyebrow">// Who Did This Before You</div>
+    <h2>People who looked like you<br>and built empires anyway.</h2>
+    <div class="person-card" style="max-width:70vw;border-left-color:var(--teal);">
+      <p class="person-story" style="font-size:clamp(0.9rem,1.5vw,1.05rem);">
+        The financial markets were not built with us in mind. For most of American history, Black people were locked out — legally, structurally, and socially — from the very systems that build generational wealth.<br><br>
+        <strong>That has changed.</strong> And the people on the next four slides didn't wait for an invitation. They studied the rules, mastered them, and then rewrote what was possible. None of them started where they ended up. All of them started by learning exactly what you're learning right now.
+      </p>
+      <div class="person-quote" style="border-left-color:var(--teal);">
+        "Financial independence doesn't mean being rich. It means getting to a point where your money works for the life you want to live." — SoFi's founding mission
+      </div>
+    </div>
+  </div>
+
+  <!-- INSPIRATION — LAUREN SIMMONS -->
+  <div class="slide slide-inspiration" data-week="0">
+    <div class="i-eyebrow">// Trailblazer 1 of 4 — Black Women in Finance</div>
+    <h2>Lauren Simmons</h2>
+    <div class="person-card teal">
+      <div class="person-name">Lauren Simmons</div>
+      <div class="person-title">Youngest Trader · NYSE · "The Wolfette of Wall Street"</div>
+      <p class="person-story">
+        Lauren grew up in Marietta, Georgia. Her degree was in <strong>genetics</strong> — not finance. She had never worked in a bank. She had no connections on Wall Street. In 2017, at 22 years old, through sheer persistence and the willingness to learn anything fast, she walked onto the floor of the New York Stock Exchange and <strong>became the youngest full-time female equity trader in NYSE history</strong> — and only the second Black woman to ever hold that position in the exchange's 228-year history.<br><br>
+        She went from knowing nothing about trading to moving <strong>$150 million a day</strong>. When asked how, she said: "I don't believe in failure. If it doesn't work out, shrug your shoulders and move forward."
+      </p>
+      <div class="person-quote">
+        "I don't want to be the only one who breaks the glass ceiling. I want other women and minorities to do it too."
+      </div>
+    </div>
+  </div>
+
+  <!-- INSPIRATION — MELLODY HOBSON -->
+  <div class="slide slide-inspiration" data-week="0">
+    <div class="i-eyebrow">// Trailblazer 2 of 4 — Black Women in Finance</div>
+    <h2>Mellody Hobson</h2>
+    <div class="person-card">
+      <div class="person-name">Mellody Hobson</div>
+      <div class="person-title">Co-CEO · Ariel Investments · $14.9 Billion in Assets</div>
+      <p class="person-story">
+        Mellody grew up in Chicago as the youngest of six children raised by a single mother who often struggled to pay rent. She attended Princeton on financial aid, graduated in 1991, and walked into an internship at Ariel Investments — the first Black-owned mutual fund company in America — with nothing but drive and a willingness to outwork everyone in the room.<br><br>
+        She never left. Over the next 30 years she rose from intern to Co-CEO, overseeing <strong>$14.9 billion in assets</strong>. She became the <strong>first Black woman to chair an S&P 500 company</strong> when she led the Starbucks board. She sits on the board of JPMorgan Chase. She co-founded Project Black — a $1.45 billion private equity fund dedicated to scaling minority-owned businesses.<br><br>
+        She did all of this by becoming the most prepared person in every room she entered.
+      </p>
+      <div class="person-quote">
+        "Be fearless. Be bold. Earn your seat, then pull up more chairs."
+      </div>
+    </div>
+  </div>
+
+  <!-- INSPIRATION — ROBERT F. SMITH -->
+  <div class="slide slide-inspiration" data-week="0">
+    <div class="i-eyebrow">// Trailblazer 3 of 4 — Black Men in Finance</div>
+    <h2>Robert F. Smith</h2>
+    <div class="person-card teal">
+      <div class="person-name">Robert F. Smith</div>
+      <div class="person-title">Founder & CEO · Vista Equity Partners · $10.8 Billion Net Worth</div>
+      <p class="person-story">
+        Robert's parents both held PhDs in education. His mother carried him to the March on Washington as an infant. He grew up in Denver, and as a high school student he wanted to intern at Bell Labs — a program that didn't accept applicants his age. So he <strong>called every single day until a manager gave him a spot.</strong> That persistence became his operating principle for life.<br><br>
+        He earned an engineering degree from Cornell, an MBA from Columbia, then spent six years at Goldman Sachs advising companies like Apple and Microsoft on billion-dollar mergers. In 2000 he founded <strong>Vista Equity Partners</strong> — a private equity firm focused entirely on software companies. Today Vista manages over <strong>$100 billion in assets</strong> and Smith is the wealthiest Black person in the United States, with a net worth of $10.8 billion.<br><br>
+        In 2019 he paid off the entire student loan debt of Morehouse College's graduating class. His message: <em>now go build something.</em>
+      </p>
+      <div class="person-quote" style="border-left-color:var(--teal);">
+        "We have an obligation to understand the systems that govern our lives — and then master them."
+      </div>
+    </div>
+  </div>
+
+  <!-- INSPIRATION — TIFFANY ALICHE -->
+  <div class="slide slide-inspiration" data-week="0">
+    <div class="i-eyebrow">// Trailblazer 4 of 4 — Black Women in Finance</div>
+    <h2>Tiffany "The Budgetnista" Aliche</h2>
+    <div class="person-card">
+      <div class="person-name">Tiffany "The Budgetnista" Aliche</div>
+      <div class="person-title">Author · Educator · First Millionaire in Her Family</div>
+      <p class="person-story">
+        Tiffany was a preschool teacher in Newark, NJ making $39,000 a year. Then the 2009 recession hit, she lost her job, a bad advisor wiped out her savings, and she found herself in a deep financial hole. Instead of staying there, she <strong>rebuilt from zero</strong> — methodically, step by step — and documented the entire process.<br><br>
+        She turned those lessons into a movement. The Budgetnista has helped <strong>over one million women worldwide</strong> collectively save more than $200 million and pay off more than $100 million in debt. She became a New York Times bestselling author, the <strong>first Black woman to solo-cover Money Magazine</strong>, and built an eight-figure business from a $39K teaching salary.<br><br>
+        In 2019, she partnered with New Jersey lawmakers to pass the Budgetnista Law — making financial literacy education mandatory in middle schools statewide. She is the first millionaire in her family. She built it by learning the rules and then teaching everyone she knew.
+      </p>
+      <div class="person-quote">
+        "People might not remember all the facts and figures, but they remember stories. Your financial story is still being written."
+      </div>
+    </div>
+  </div>
+
+  <!-- GAIL PANKEY-ALBERT -->
+  <div class="slide slide-inspiration" data-week="0">
+    <div class="i-eyebrow">// Trailblazer 5 of 7 — Black Women in Finance</div>
+    <h2>Gail Pankey-Albert</h2>
+    <div class="person-card teal">
+      <div class="person-name">Gail Pankey-Albert</div>
+      <div class="person-title">First African American Woman Trader in NYSE History</div>
+      <p class="person-story">
+        Before Lauren Simmons. Before anyone else. In a financial institution that had existed since 1792, Gail Pankey-Albert became the <strong>first Black woman to ever trade on the floor of the New York Stock Exchange</strong>. She did it without a roadmap. Without people who looked like her to look up to. Without a template for what it was supposed to look like.<br><br>
+        She walked into a room that had never seen her — and she did the work anyway. Every Black woman in finance today walks through a hallway she helped build. When Lauren Simmons made history in 2017, she was walking through a door Gail had already cracked open. <strong>First is harder than second.</strong> And Gail was first.
+      </p>
+      <div class="person-quote" style="border-left-color:var(--teal);">
+        The first person through the door never has it easy. They make it easier for everyone who comes after. That's the whole point.
+      </div>
+    </div>
+  </div>
+
+  <!-- RASHAD BILAL & TROY MILLINGS -->
+  <div class="slide slide-inspiration" data-week="0">
+    <div class="i-eyebrow">// Trailblazers 6 & 7 of 7 — Black Men in Finance</div>
+    <h2>Rashad Bilal & Troy Millings</h2>
+    <div class="person-card">
+      <div class="person-name">Rashad Bilal & Troy Millings</div>
+      <div class="person-title">Co-Founders, Earn Your Leisure · The Largest Black-Owned Financial Education Platform in the World</div>
+      <p class="person-story">
+        Rashad was a financial advisor in the Bronx who watched his clients — doctors, lawyers, professionals — make good money but have <strong>no real understanding of how it grows</strong>. Troy was a public school PE teacher who started weaving financial literacy into his lesson plans because nobody else was doing it.<br><br>
+        In 2019, the two childhood friends launched a podcast called <strong>Earn Your Leisure</strong> to bring real financial education to Black communities who had historically been shut out of Wall Street's knowledge. What started in a room became the world's largest Black-owned financial education platform — their own podcast network, EYL University, and InvestFest, an annual financial festival that sold out Madison Square Garden. They teach stocks, options, real estate, and business — the exact same tools that build generational wealth.<br><br>
+        They didn't wait for Wall Street to invite them in. <strong>They built their own table and seated thousands.</strong>
+      </p>
+      <div class="person-quote">
+        "Financial literacy can change the direction of the world. When we see social injustice, political action — all of it ties back to financial literacy and economic empowerment." — Rashad Bilal
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT THEY ALL HAVE IN COMMON -->
+  <div class="slide slide-inspiration" data-week="0">
+    <div class="i-eyebrow">// The Pattern</div>
+    <h2>What every one of them did.</h2>
+    <div class="person-card" style="max-width:74vw;border-left-color:var(--green);">
+      <p class="person-story" style="font-size:clamp(0.88rem,1.4vw,1rem);">
+        None of them were born into wealth. None had a guaranteed seat at the table. Gail walked onto a floor that had never seen her. Lauren had a genetics degree and no finance background. Mellody had no money for college. Robert got rejected from an internship and called back every day until they said yes. Tiffany lost everything at 30 and rebuilt from scratch. Rashad and Troy didn't wait for Wall Street — they built their own platform.<br><br>
+        <strong>They all did the same four things:</strong>
+      </p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-top:1rem;">
+        <div style="background:var(--black);padding:0.85rem 1rem;border-left:3px solid var(--green);font-size:clamp(0.78rem,1.2vw,0.88rem);color:var(--muted);line-height:1.55;">
+          <strong style="color:var(--green);">01 / THEY LEARNED THE RULES</strong><br>Not just the basics — all of it. They became the most prepared person in every room.
+        </div>
+        <div style="background:var(--black);padding:0.85rem 1rem;border-left:3px solid var(--green);font-size:clamp(0.78rem,1.2vw,0.88rem);color:var(--muted);line-height:1.55;">
+          <strong style="color:var(--green);">02 / THEY STAYED IN THE GAME</strong><br>They didn't quit when it got uncomfortable. They didn't exit when it looked hard. They stayed.
+        </div>
+        <div style="background:var(--black);padding:0.85rem 1rem;border-left:3px solid var(--green);font-size:clamp(0.78rem,1.2vw,0.88rem);color:var(--muted);line-height:1.55;">
+          <strong style="color:var(--green);">03 / THEY WERE METHODICAL</strong><br>No gambling. No chasing. No shortcuts. They built systems, followed rules, and compounded discipline over time.
+        </div>
+        <div style="background:var(--black);padding:0.85rem 1rem;border-left:3px solid var(--green);font-size:clamp(0.78rem,1.2vw,0.88rem);color:var(--muted);line-height:1.55;">
+          <strong style="color:var(--green);">04 / THEY SHARED THE KNOWLEDGE</strong><br>Every single one of them turned around and brought someone else with them. That's what this class is.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE OF A SMART TRADER -->
+  <div class="slide slide-profile" data-week="0">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;margin-bottom:0.5rem;">// The Identity</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.2vw,2.2rem);font-weight:800;letter-spacing:-0.02em;">The profile of a smart, strategic options trader.</h2>
+    <div class="profile-split">
+      <div class="profile-col yes">
+        <h3>✓ What They Do</h3>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--green);">→</span><span>Follow a written set of rules before every trade — and don't break them</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--green);">→</span><span>Select low-Delta strikes that put probability in their favor from day one</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--green);">→</span><span>Calculate the midpoint and place limit orders — never market orders</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--green);">→</span><span>Log every trade immediately with full entry metrics</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--green);">→</span><span>Let time work. Trust the math. Check the position — don't obsess over it</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--green);">→</span><span>Treat assignment as a transition, not a failure</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--green);">→</span><span>Reinvest premium and compound the results over time</span></div>
+      </div>
+      <div class="profile-col no">
+        <h3>✗ What They Never Do</h3>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--red);">→</span><span>Chase trades because the premium "looks good" without checking Delta</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--red);">→</span><span>Use market orders and let algorithms take their money</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--red);">→</span><span>Panic-close a position just because it shows a paper loss</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--red);">→</span><span>Trade money they can't afford to lock up for 30 days</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--red);">→</span><span>Check the position every hour and make emotional decisions</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--red);">→</span><span>Deviate from the rules because "this time feels different"</span></div>
+        <div class="profile-item"><span class="pi-icon" style="color:var(--red);">→</span><span>Confuse being busy in the market with being profitable</span></div>
+      </div>
+      <div class="profile-mantra">You are not a gambler. You are not a speculator. You are a disciplined business operator — and this is your business.</div>
+    </div>
+  </div>
+
+  <div class="slide slide-week-intro" data-week="0">
+    <span class="wk-tag">Week 1 · 60 Minutes</span>
+    <h2>The Notional Factory</h2>
+    <p class="obj">Options are legal contracts. Every single contract controls exactly 100 shares. Before you can trade, you have to understand what you're actually agreeing to.</p>
+    <div class="big-num">01</div>
+  </div>
+
+  <!-- Vocab W1 -->
+  <div class="slide slide-vocab" data-week="0">
+    <div class="slide-sub">// Week 1 — Vocabulary</div>
+    <div class="slide-heading">The Language of the Trade</div>
+    <div class="vocab-list">
+      <div class="vl-item">
+        <div class="vl-term">Derivative</div>
+        <div class="vl-def">A financial contract whose value is entirely derived from the price of an underlying asset. Options are derivatives of stocks.</div>
+      </div>
+      <div class="vl-item">
+        <div class="vl-term">Put Option</div>
+        <div class="vl-def">Gives the buyer the <strong>Right</strong> to sell a stock at a set price. Gives the seller the <strong>Obligation</strong> to buy it at that price.</div>
+      </div>
+      <div class="vl-item">
+        <div class="vl-term">Premium</div>
+        <div class="vl-def">Upfront cash the buyer pays the seller to enter the contract. The seller keeps this no matter what happens.</div>
+      </div>
+      <div class="vl-item">
+        <div class="vl-term">Cash Collateral</div>
+        <div class="vl-def">Cash frozen in your account to guarantee you can fulfill your obligation. Formula: Strike Price × 100.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SNEAKER WALKTHROUGH: 1 of 8 — The Setup ── -->
+  <div class="slide slide-analogy" data-week="0">
+    <div class="slide-sub" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;">// The Sneaker Trade · Step 1 of 8 — The Setup</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:1.25rem;">Every options trade starts with an underlying asset.</h2>
+    <div class="analogy-box">
+      A pair of SOFI-brand sneakers is trading on the resale market right now for <strong style="color:var(--amber);">$4.80 a pair</strong>. Someone owns 100 pairs of them.<br><br>
+      That $4.80 market price is the <strong>underlying asset value</strong> — the real thing the contract is based on. In options trading, this is the stock price. Everything we do is tied to this number.
+    </div>
+    <div class="role-row" style="max-width:70vw;">
+      <div class="role-box" style="border-top:2px solid var(--teal);">
+        <div class="rl" style="color:var(--teal);">THE SNEAKER = THE STOCK</div>
+        <div class="rd">The sneaker represents SOFI stock. The owner has 100 pairs — just like one options contract controls 100 shares.</div>
+      </div>
+      <div class="role-box" style="border-top:2px solid var(--amber);">
+        <div class="rl" style="color:var(--amber);">$4.80 PRICE = THE STOCK PRICE</div>
+        <div class="rd">$4.80 is what SOFI trades for right now. The owner paid $4.80 per pair. They're sitting on inventory and getting nervous about where the market is headed.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SNEAKER WALKTHROUGH: 2 of 8 — The Players ── -->
+  <div class="slide slide-analogy" data-week="0">
+    <div class="slide-sub" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;">// The Sneaker Trade · Step 2 of 8 — The Players</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:1.25rem;">Two players. One contract. Very different positions.</h2>
+    <div class="role-row" style="max-width:75vw;margin-bottom:1.25rem;">
+      <div class="role-box" style="padding:1.5rem;border-top:3px solid var(--teal);">
+        <div class="rl" style="color:var(--teal);font-size:0.72rem;margin-bottom:0.5rem;">THE BUYER — The Sneaker Owner</div>
+        <div class="rd" style="line-height:1.65;">Already owns 100 pairs of SOFI sneakers worth $4.80 each. Worried the resale market might crash. Wants <strong style="color:var(--text);">insurance</strong> — a guaranteed price they can sell at no matter what happens. They are <strong style="color:var(--text);">not trying to buy from you.</strong> They want the right to <em>sell to you</em>.</div>
+      </div>
+      <div class="role-box" style="padding:1.5rem;border-top:3px solid var(--amber);">
+        <div class="rl" style="color:var(--amber);font-size:0.72rem;margin-bottom:0.5rem;">THE SELLER — The Store (US)</div>
+        <div class="rd" style="line-height:1.65;">We run the store. We're willing to <strong style="color:var(--text);">buy their sneakers at a guaranteed price</strong> if the market drops — for a fee collected upfront. We are selling an insurance policy. We collect the premium whether they ever show up or not.</div>
+      </div>
+    </div>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--amber);">→ We are always the store. We sell the insurance. We collect. We wait.</p>
+  </div>
+
+  <!-- ── SNEAKER WALKTHROUGH: 3 of 8 — The Contract ── -->
+  <div class="slide slide-analogy" data-week="0">
+    <div class="slide-sub" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;">// The Sneaker Trade · Step 3 of 8 — The Contract Terms</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:1.25rem;">The owner walks in. Here's what they're asking for.</h2>
+    <div class="analogy-box" style="max-width:72vw;">
+      "I'll pay you <strong style="color:var(--amber);">$12 right now</strong> — cash, no refund — and in exchange, you give me a signed certificate that says I can walk in anytime over the next <strong style="color:var(--amber);">30 days</strong> and sell you my 100 pairs at <strong style="color:var(--amber);">$4.00 each</strong>, guaranteed."
+    </div>
+    <div class="role-row" style="max-width:72vw;">
+      <div class="role-box">
+        <div class="rl" style="color:var(--teal);">$12 CASH = THE PREMIUM</div>
+        <div class="rd">The fee you collect upfront for agreeing to the deal. Yours immediately, forever, no matter what happens next.</div>
+      </div>
+      <div class="role-box">
+        <div class="rl" style="color:var(--amber);">30 DAYS = EXPIRATION DATE</div>
+        <div class="rd">The window the certificate is valid. After 30 days, the deal is dead. The certificate is worthless paper.</div>
+      </div>
+      <div class="role-box">
+        <div class="rl" style="color:var(--green);">$4.00 = THE STRIKE PRICE</div>
+        <div class="rd">The guaranteed buyback price. No matter what sneakers trade for on Day 30, you are obligated to buy at $4.00 per pair if they exercise.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SNEAKER WALKTHROUGH: 4 of 8 — You Accept ── -->
+  <div class="slide slide-analogy" data-week="0">
+    <div class="slide-sub" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;">// The Sneaker Trade · Step 4 of 8 — You Accept the Deal</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:1.25rem;">You take the $12. Now you have one obligation.</h2>
+    <div class="analogy-box" style="max-width:72vw;">
+      You accept the $12 and sign the certificate. Then you open your register and set aside <strong style="color:var(--amber);">$400 in cash</strong> — 100 pairs × $4.00 — reserved and untouchable. If they walk in and exercise the certificate, you need that cash ready to buy their shoes. You're not holding inventory. You're holding the <strong style="color:var(--amber);">purchasing power</strong> to honor your word.
+    </div>
+    <div class="role-row" style="max-width:72vw;">
+      <div class="role-box" style="border-top:3px solid var(--amber);">
+        <div class="rl" style="color:var(--amber);">$12 COLLECTED = PREMIUM INCOME</div>
+        <div class="rd">In your pocket immediately. This is your profit if the market holds and they never show up.</div>
+      </div>
+      <div class="role-box" style="border-top:3px solid var(--red);">
+        <div class="rl" style="color:var(--red);">$400 IN REGISTER = CASH COLLATERAL</div>
+        <div class="rd">In options: cash your broker freezes in your account. You can't spend it while the contract is open. This is exactly why the strategy is called "cash-secured" — the money to buy the shares is already there, waiting.</div>
+      </div>
+    </div>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted);margin-top:1.25rem;">Day 1: $12 in pocket. $400 reserved. You're prepared for either outcome.</p>
+  </div>
+
+  <!-- ── SNEAKER WALKTHROUGH: 4b — The $12 Is Credited, Not Locked ── -->
+  <div class="slide slide-analogy" data-week="0">
+    <div class="slide-sub" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;">// The Sneaker Trade · Step 4b — The $12 Is Credited, Not Locked</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:1.25rem;">The $12 is in your pocket. But the deal isn't over yet.</h2>
+    <div class="analogy-box" style="max-width:78vw;">
+      The moment the owner paid you and walked out the door, the $12 showed up in your register. You can see it. It feels like yours. <strong style="color:var(--amber);">But the certificate is still valid.</strong> They still have 30 days to come back.<br><br>
+      Here's the catch: every day that passes, the value of that certificate changes based on what's happening in the sneaker market. If SOFI sneaker prices start dropping toward $4.00, other people in the market realize that certificate is becoming <em>more valuable</em> — they'd pay <em>more</em> than $12 for it now. Which means if you wanted to cancel the deal early, you'd have to buy that certificate back for <strong style="color:var(--red);">more than $12.</strong> That would be a loss.<br><br>
+      On the other hand, if SOFI sneaker prices stay strong and move further away from $4.00, the certificate becomes <em>less valuable</em> every day — nobody wants to pay much for the right to sell at $4.00 when the market pays $4.80. Eventually it approaches worthless. You could buy it back for <strong style="color:var(--green);">pennies</strong>, or just wait for it to expire.
+    </div>
+    <div class="role-row" style="max-width:78vw;">
+      <div class="role-box" style="border-top:3px solid var(--green);">
+        <div class="rl" style="color:var(--green);">THE $12 BECOMES TRULY YOURS WHEN:</div>
+        <div class="rd" style="line-height:1.7;">
+          <strong style="color:var(--text);">1. The contract expires worthless.</strong> 30 days pass, SOFI stays above $4.00, the certificate is worthless paper. The $12 is now permanently locked in — you owe nothing.<br><br>
+          <strong style="color:var(--text);">2. You buy the certificate back early (Buy to Close).</strong> You pay, say, $3 to cancel the deal before the 30 days are up. You locked in $9 of profit and removed all remaining risk.
+        </div>
+      </div>
+      <div class="role-box" style="border-top:3px solid var(--red);">
+        <div class="rl" style="color:var(--red);">THE $12 IS AT RISK WHEN:</div>
+        <div class="rd" style="line-height:1.7;">
+          The contract is still open and SOFI is falling toward your $4.00 strike. The certificate is gaining value in the market. If you had to cancel the deal right now, you'd pay more than $12 to do it.<br><br>
+          <strong style="color:var(--text);">This is why you will see your position show a paper loss</strong> even though $12 already landed in your account. The position is marked to market in real time. Stay calm — it only matters what happens at expiration, or when you close.
+        </div>
+      </div>
+    </div>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--amber);margin-top:1.25rem;">The $12 is credited the moment you sell. It is locked the moment the contract closes — by expiration or by buying it back.</p>
+  </div>
+
+  <!-- ── SNEAKER WALKTHROUGH: 5 of 8 — Mapping to SOFI ── -->
+  <div class="slide slide-analogy" data-week="0">
+    <div class="slide-sub" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;">// The Sneaker Trade · Step 5 of 8 — Now Map It to SOFI</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:1.25rem;">Same trade. Different words. Real market.</h2>
+    <table class="drill-table-slide" style="max-width:72vw;">
+      <thead>
+        <tr>
+          <th>Sneaker World</th>
+          <th>→</th>
+          <th>Options World</th>
+          <th>Real Numbers</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>SOFI sneaker (100 pairs)</td>
+          <td style="color:var(--amber);">→</td>
+          <td>Underlying stock (100 shares)</td>
+          <td style="color:var(--teal);">SOFI · 1 contract</td>
+        </tr>
+        <tr>
+          <td>$4.80 resale price</td>
+          <td style="color:var(--amber);">→</td>
+          <td>Current stock price</td>
+          <td style="color:var(--teal);">$4.80 per share</td>
+        </tr>
+        <tr>
+          <td>$12 insurance fee</td>
+          <td style="color:var(--amber);">→</td>
+          <td>Premium collected</td>
+          <td style="color:var(--green);">$12.00 (= $0.12 × 100 shares)</td>
+        </tr>
+        <tr>
+          <td>$400 reserved in register</td>
+          <td style="color:var(--amber);">→</td>
+          <td>Cash collateral frozen</td>
+          <td style="color:var(--red);">$400.00 (= $4.00 strike × 100)</td>
+        </tr>
+        <tr>
+          <td>Signed certificate</td>
+          <td style="color:var(--amber);">→</td>
+          <td>The options contract</td>
+          <td style="color:var(--teal);">SOFI $4.00 Put · 30 DTE</td>
+        </tr>
+        <tr>
+          <td>30-day window</td>
+          <td style="color:var(--amber);">→</td>
+          <td>Expiration date</td>
+          <td style="color:var(--teal);">30 days out</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── SNEAKER WALKTHROUGH: 6 of 8 — Outcome A: Expires Worthless ── -->
+  <div class="slide slide-analogy" data-week="0">
+    <div class="slide-sub" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--green);text-transform:uppercase;margin-bottom:1rem;">// The Sneaker Trade · Step 6 of 8 — Outcome A: Best Case ✓</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:1.25rem;">30 days later — the owner never shows up.</h2>
+    <div class="analogy-box" style="max-width:72vw;border-left-color:var(--green);">
+      The sneaker market held strong. SOFI pairs are still trading at $4.80 or higher. The owner has no reason to sell their shoes to you at $4.00 when the open market pays more. The 30 days expire. The certificate becomes worthless paper. They keep their shoes. You keep the $12.
+    </div>
+    <div class="role-row" style="max-width:72vw;">
+      <div class="role-box" style="border-top:3px solid var(--green);">
+        <div class="rl" style="color:var(--green);">SNEAKER WORLD RESULT</div>
+        <div class="rd">You keep the $12 fee. Your $400 unlocks. You never had to buy a single pair. Pure profit for holding the obligation and waiting 30 days.</div>
+      </div>
+      <div class="role-box" style="border-top:3px solid var(--green);">
+        <div class="rl" style="color:var(--green);">OPTIONS WORLD RESULT</div>
+        <div class="rd">SOFI stayed above $4.00. The put expires worthless. You keep the $12 premium. Your $400 collateral unlocks. Run the same trade again immediately.</div>
+      </div>
+    </div>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--green);margin-top:1.25rem;">This is the target outcome. It happens ~85% of the time at a 0.15 Delta strike. Of course they don't show up — why sell at $4.00 when the market pays $4.80?</p>
+  </div>
+
+  <!-- ── SNEAKER WALKTHROUGH: 7 of 8 — Outcome B: Assignment ── -->
+  <div class="slide slide-analogy" data-week="0">
+    <div class="slide-sub" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--red);text-transform:uppercase;margin-bottom:1rem;">// The Sneaker Trade · Step 7 of 8 — Outcome B: Assignment</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:1.25rem;">30 days later — the owner walks in with the certificate.</h2>
+    <div class="analogy-box" style="max-width:72vw;border-left-color:var(--red);">
+      The sneaker market crashed. SOFI pairs are now selling everywhere for $3.50. The owner pulls out the certificate: <em>"Market's only paying $3.50, but you guaranteed me $4.00. I'm selling to you."</em> You open the register, hand over $400, and take the 100 pairs at $4.00 each — even though they're worth $3.50 today. Of course they showed up. Why sell at $3.50 when you guaranteed $4.00?
+    </div>
+    <div class="role-row" style="max-width:72vw;">
+      <div class="role-box" style="border-top:3px solid var(--amber);">
+        <div class="rl" style="color:var(--amber);">SNEAKER WORLD RESULT</div>
+        <div class="rd">You spent $400 buying 100 pairs now worth $350. Paper loss of $50, offset by the $12 fee collected. Net cost: $388. You now own 100 pairs of SOFI sneakers.</div>
+      </div>
+      <div class="role-box" style="border-top:3px solid var(--amber);">
+        <div class="rl" style="color:var(--amber);">OPTIONS WORLD RESULT</div>
+        <div class="rd">SOFI dropped below $4.00. Your $400 collateral purchases 100 shares at the $4.00 strike. Stock trades at $3.50. Effective cost basis = $4.00 − $0.12 = <strong style="color:var(--text);">$3.88 per share</strong>.</div>
+      </div>
+    </div>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--muted);margin-top:1.25rem;">Not failure — transition. You now own the shares. Next move: sell Covered Calls to collect more premium and lower your cost basis further.</p>
+  </div>
+
+  <!-- ── SNEAKER WALKTHROUGH: 8 of 8 — The Full Map ── -->
+  <div class="slide slide-analogy" data-week="0">
+    <div class="slide-sub" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.2em;color:var(--amber);text-transform:uppercase;margin-bottom:1rem;">// The Sneaker Trade · Step 8 of 8 — The Complete Picture</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:clamp(1.5rem,3.2vw,2.4rem);font-weight:800;letter-spacing:-0.02em;margin-bottom:1.25rem;">Every trade you ever run follows this exact structure.</h2>
+    <table class="drill-table-slide" style="max-width:80vw;">
+      <thead>
+        <tr>
+          <th>Phase</th>
+          <th>What Happens</th>
+          <th>Sneaker World</th>
+          <th>Options World</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:0.72rem;">OPEN</td>
+          <td>Sell the insurance contract</td>
+          <td>Collect $12, reserve $400 in register</td>
+          <td>Sell to Open · Collect $12 premium</td>
+          <td style="color:var(--green);">+$12 in account</td>
+        </tr>
+        <tr>
+          <td style="color:var(--amber);font-family:'JetBrains Mono',monospace;font-size:0.72rem;">WAITING</td>
+          <td>Time passes (Theta works for us)</td>
+          <td>30 days tick by, owner watches the market</td>
+          <td>Contract loses value daily as time decays</td>
+          <td style="color:var(--teal);">Premium decays toward $0</td>
+        </tr>
+        <tr>
+          <td style="color:var(--green);font-family:'JetBrains Mono',monospace;font-size:0.72rem;">OUTCOME A</td>
+          <td>Market stays above strike</td>
+          <td>Owner keeps shoes — market pays more than $4.00</td>
+          <td>Put expires worthless</td>
+          <td style="color:var(--green);">Keep full $12 · $400 unlocks · Repeat</td>
+        </tr>
+        <tr>
+          <td style="color:var(--red);font-family:'JetBrains Mono',monospace;font-size:0.72rem;">OUTCOME B</td>
+          <td>Market drops below strike</td>
+          <td>Owner sells shoes to us at $4.00 — beats market</td>
+          <td>Assigned 100 shares at $4.00</td>
+          <td style="color:var(--amber);">Own shares at $3.88 cost · Sell Covered Calls</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;color:var(--amber);margin-top:1.25rem;">The store never closes. Both outcomes are manageable. That's The Wheel.</p>
+  </div>
+
+  <!-- Formula W1 -->
+  <div class="slide slide-formula" data-week="0">
+    <div class="formula-eyebrow">// Week 1 — The Mathematical Law</div>
+    <h2>Every contract controls 100 shares.<br>That sets your collateral requirement.</h2>
+    <div class="formula-big">
+      <div class="f-label">Cash Collateral Required</div>
+      <div class="f-eq">Strike Price × 100 = Cash Locked</div>
+    </div>
+    <table class="drill-table-slide">
+      <thead>
+        <tr>
+          <th>Ticker / Strike</th>
+          <th>Calculation</th>
+          <th>Collateral Required</th>
+          <th>$500 Account — Safe?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ABEV @ $2.00</td>
+          <td>$2.00 × 100</td>
+          <td>$200.00</td>
+          <td style="color:var(--green);">✓ Safe ($300 remaining)</td>
+        </tr>
+        <tr>
+          <td>SOFI @ $4.50</td>
+          <td>$4.50 × 100</td>
+          <td>$450.00</td>
+          <td style="color:var(--green);">✓ Safe ($50 remaining)</td>
+        </tr>
+        <tr>
+          <td>LUMN @ $6.00</td>
+          <td>$6.00 × 100</td>
+          <td>$600.00</td>
+          <td style="color:var(--red);">✗ Rejected — over limit</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Quiz W1 Q1 -->
+  <div class="slide slide-quiz" data-week="0">
+    <div class="quiz-eyebrow">// Week 1 · Quiz Question 1</div>
+    <div class="quiz-q-big">1 contract always equals exactly ________ shares of stock.</div>
+    <div class="quiz-open-answer">
+      Write your answer:<br>
+      <span class="blank-line"></span>
+      And explain <em>why</em> this number matters for your $500 account:
+      <span class="blank-line"></span>
+    </div>
+  </div>
+
+  <!-- Quiz W1 Q2 -->
+  <div class="slide slide-quiz" data-week="0">
+    <div class="quiz-eyebrow">// Week 1 · Quiz Question 2</div>
+    <div class="quiz-q-big">If you SELL an option and collect premium upfront, do you hold a Right or an Obligation?</div>
+    <div class="quiz-options">
+      <div class="q-opt"><span class="opt-letter">A</span> A Right — you can walk away anytime</div>
+      <div class="q-opt"><span class="opt-letter">B</span> An Obligation — you must fulfill the contract if the buyer exercises</div>
+      <div class="q-opt"><span class="opt-letter">C</span> Neither — you're just holding the premium</div>
+    </div>
+  </div>
+
+  <!-- Quiz W1 Q3 -->
+  <div class="slide slide-quiz" data-week="0">
+    <div class="quiz-eyebrow">// Week 1 · Quiz Question 3</div>
+    <div class="quiz-q-big">SOFI is at $4.80. You sell a $4.00 Put and collect a $0.12 premium.<br>How much cash income lands in your account? How much collateral is frozen?</div>
+    <div class="quiz-open-answer">
+      Premium collected: <span class="blank-line"></span>
+      Collateral frozen: <span class="blank-line"></span>
+      Show your math below:
+      <span class="blank-line"></span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       WEEK 1 HOMEWORK
+  ══════════════════════════════════════════ -->
+  <div class="slide slide-homework" data-week="0">
+    <div class="hw-eyebrow">// Week 1 — Your Homework</div>
+    <h2>Five assignments. Due before Week 2.</h2>
+    <div class="hw-grid">
+      <div class="hw-item">
+        <div class="hw-num">HW 01</div>
+        <div class="hw-title">Set Up Your Paper Trading Account</div>
+        <div class="hw-desc">Go to <strong>international.schwab.com/trading/thinkorswim/guestpass</strong> and set up your Thinkorswim paperMoney trial account. This is the platform we'll use for all drills and your first live trade. Have it open and ready before Week 2.</div>
+        <span class="hw-tag">PLATFORM SETUP</span>
+      </div>
+      <div class="hw-item" style="border-left-color:var(--teal);">
+        <div class="hw-num" style="color:var(--teal);">HW 02</div>
+        <div class="hw-title">Look It Up</div>
+        <div class="hw-desc">Go back through today's presentation. Write down every term, concept, or number you didn't fully understand. Bring the list to Week 2 — we'll open the session by reviewing them together as a group. No question is too basic.</div>
+        <span class="hw-tag" style="color:var(--teal);background:var(--teal-bg);">BRING TO NEXT SESSION</span>
+      </div>
+      <div class="hw-item" style="border-left-color:var(--green);">
+        <div class="hw-num" style="color:var(--green);">HW 03</div>
+        <div class="hw-title">Who Inspires You?</div>
+        <div class="hw-desc">Which story from today's presentation hit different for you — and why? If none of them moved you, go find someone who does. Look up a Black investor, trader, or entrepreneur whose story makes you feel like it's possible. Bring the name and one paragraph about why.</div>
+        <span class="hw-tag" style="color:var(--green);background:var(--green-bg);">WRITTEN RESPONSE</span>
+      </div>
+      <div class="hw-item" style="border-left-color:var(--amber);">
+        <div class="hw-num" style="color:var(--amber);">HW 04</div>
+        <div class="hw-title">Who Are You as a Trader?</div>
+        <div class="hw-desc">What type of trader do you want to be? Write out your personal pillars of success — the non-negotiable rules you will hold yourself to. Use the Smart Trader Profile slide as a starting point, but make it yours. This is your trading identity on paper.</div>
+        <span class="hw-tag" style="color:var(--amber);background:var(--accent-bg);">YOUR TRADING IDENTITY</span>
+      </div>
+      <div class="hw-item" style="border-left-color:var(--muted);grid-column:1/-1;">
+        <div class="hw-num" style="color:var(--muted);">HW 05</div>
+        <div class="hw-title">Watch SOFI Every Day This Week</div>
+        <div class="hw-desc">Check SOFI's stock price every single day — morning, after school, whenever. Log it in a simple table: date, price, any news or reason you can find for why it went up or down. By Week 2 you will have watched the market move in real time. That awareness is something you can't teach in a session — you have to build it yourself.</div>
+        <span class="hw-tag" style="color:var(--muted);background:var(--card2);">DAILY HABIT · 5 MIN/DAY</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING QUOTE -->
+  <div class="slide slide-close" data-week="0">
+    <p class="close-quote">"If you want to be rich, stop doing what makes you poor."</p>
+    <p class="close-attr">— Dr. Joe Dispenza</p>
+    <div class="close-cta">See you Week 2.</div>
+  </div>
+
+</div><!-- /deck -->
+
+<div id="nav-bar">
+  <div id="week-label">Week 1 — The Notional Factory</div>
+  <div id="slide-counter">1 / 1</div>
+  <div class="nav-btns">
+    <button class="nav-btn" onclick="prevSlide()">← PREV</button>
+    <button class="nav-btn" onclick="nextSlide()">NEXT →</button>
+  </div>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let current = 0;
+
+  function show(idx) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(total - 1, idx));
+    slides[current].classList.add('active');
+    slides[current].scrollTop = 0;
+    document.getElementById('progress').style.width = ((current / (total - 1)) * 100) + '%';
+    document.getElementById('slide-counter').textContent = (current + 1) + ' / ' + total;
+  }
+
+  function nextSlide() { show(current + 1); }
+  function prevSlide() { show(current - 1); }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') nextSlide();
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   prevSlide();
+  });
+
+  document.getElementById('deck').addEventListener('click', e => {
+    if (!e.target.closest('.q-opt') && !e.target.closest('.act-opt') && !e.target.closest('.reveal-btn') && !e.target.closest('#nav-bar')) {
+      // Only advance if the active slide is not scrollable or is already at the bottom
+      const active = slides[current];
+      const atBottom = active.scrollHeight - active.scrollTop <= active.clientHeight + 10;
+      if (active.scrollHeight <= active.clientHeight + 10 || atBottom) {
+        nextSlide();
+      }
+    }
+  });
+
+  document.querySelectorAll('.q-opt').forEach(opt => {
+    opt.addEventListener('click', e => {
+      e.stopPropagation();
+      const siblings = opt.parentElement.querySelectorAll('.q-opt');
+      siblings.forEach(s => s.classList.remove('correct', 'wrong'));
+      opt.classList.add('correct');
+    });
+  });
+
+  function selectAct(el, groupId) {
+    document.querySelectorAll('#' + groupId + ' .act-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function revealAct(revealId) {
+    const el = document.getElementById(revealId);
+    if (el) {
+      el.classList.toggle('show');
+      const btn = el.previousElementSibling;
+      if (btn && btn.classList.contains('reveal-btn')) {
+        btn.textContent = el.classList.contains('show') ? 'Hide Answer' : 'Reveal Answer';
+      }
+    }
+  }
+
+  show(0);
+</script>
+</body>
+</html>
